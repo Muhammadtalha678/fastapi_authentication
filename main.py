@@ -3,18 +3,13 @@ from contextlib import asynccontextmanager
 
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from src.routers.user_router import router as UserRouter
+from src.lib.configs import env_config
 from src.routers.auth_router import router as AuthRouter
 from src.lib.db.connect_db import ConnectDB
 from src.models.user_model import User
 @asynccontextmanager
 async def lifespan(app:FastAPI):
-    DATABASE_URL = "mssql+pyodbc://@localhost\\SQLEXPRESS/TestDB?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
-    # DATABASE_URL = "mssql+pyodbc://UserName:YourPassword@localhost\\SQLEXPRESS/TestDB?driver=ODBC+Driver+17+for+SQL+Server"
-
-
-
-    db = ConnectDB(DATABASE_URL)
+    db = ConnectDB(env_config.DATABASE_URL)
     db.connection()
     db.create_tables()
     app.state.engine = db.engine
@@ -46,5 +41,4 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         }
     )
 
-app.include_router(UserRouter)
 app.include_router(AuthRouter)

@@ -5,3 +5,4 @@ load_dotenv()
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = os.getenv("ALGORITHM")
+DATABASE_URL = os.getenv("DATABASE_URL")
