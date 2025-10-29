@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request,status
 from contextlib import asynccontextmanager
-
+import urllib.parse
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from src.lib.configs import env_config
@@ -9,7 +9,9 @@ from src.lib.db.connect_db import ConnectDB
 from src.models.user_model import User
 @asynccontextmanager
 async def lifespan(app:FastAPI):
-    db = ConnectDB(env_config.DATABASE_URL)
+    # print(env_config.DATABASE_URL)
+    db = ConnectDB(env_config.url_object)
+    
     db.connection()
     db.create_tables()
     app.state.engine = db.engine
