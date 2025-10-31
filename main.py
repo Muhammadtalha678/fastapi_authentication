@@ -13,7 +13,7 @@ async def lifespan(app:FastAPI):
     db = ConnectDB(env_config.url_object)
     
     db.connection()
-    db.create_tables()
+    # db.create_tables()
     app.state.engine = db.engine
     yield 
     db.close_connection()
