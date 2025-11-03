@@ -3,22 +3,33 @@ from contextlib import asynccontextmanager
 import urllib.parse
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from src.lib.configs import env_config
 from src.routers.auth_router import router as AuthRouter
 from src.lib.db.connect_db import ConnectDB
 from src.models.user_model import User
+
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     # print(env_config.DATABASE_URL)
     db = ConnectDB(env_config.url_object)
     
     db.connection()
-    db.create_tables()
+    # db.create_tables()
     app.state.engine = db.engine
     yield 
     db.close_connection()
     print("close")
 app = FastAPI(lifespan=lifespan)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 @app.get("/")
 def index():
